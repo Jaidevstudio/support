@@ -19,11 +19,15 @@ body:
       required: false
   - type: textarea
     id: Additional
+    type: input
+    id: Email id.
     attributes:
-      label: Email id (if applicable)
+      label: Email (if applicable)
       placeholder: Insert your Email id.
     validations:
       required: false
+    type: textarea
+    id: Additional
 
     attributes:
       label: Additional Context
