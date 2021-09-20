@@ -72,7 +72,7 @@ Learn more on [GitHub docs](https://docs.github.com/en/github/setting-up-and-man
   Here is a list of resources that also might help you start contributing to open source:
   - [How to get started A Robot Projects](https://github.com/jaidevstudio/support/issues/)
   
-  - [Open source tips from Jai RoBot](https://github.com/jaidevstudiorobot)![Robot Icon](https://avatars.githubusercontent.com/u/91027746?v=4)
+  - [Open source tips from  RoBot Jai](https://github.com/jaidevstudiorobot)![Robot Icon](https://avatars.githubusercontent.com/u/91027746?v=4)
 - **How to look for an open-source project to contribute?** Check [Finding Open Source Projects](./tips/finding-open-source-projects.md)
 
 ## Socials
