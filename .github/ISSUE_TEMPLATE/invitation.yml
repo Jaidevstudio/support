@@ -20,7 +20,7 @@ body:
   - type: textarea
     id: Additional
     attributes:
-      label: Email (if applicable)
+      label: Email id (if applicable)
       placeholder: Insert your Email id.
     validations:
       required: false
