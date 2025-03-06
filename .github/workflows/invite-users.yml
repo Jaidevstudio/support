@@ -12,24 +12,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Get issues with specific label
+      - name: Get open issues with specific label
         run: |
-          # Get the list of open issues with the label "Please invite me to the GitHub Community Organization"
-          issues=$(curl -s "https://api.github.com/repos/${{ github.repository }}/issues?state=open&labels=Please+invite+me+to+the+GitHub+Community+Organization")
-          
+          # Get the list of open issues with the label "invite me to the organisation"
+          issues=$(curl -s "https://api.github.com/repos/${{ github.repository }}/issues?state=open&labels=invite+me+to+the+organisation")
+
           # Loop through open issues and post a message
           for issue in $(echo "$issues" | jq -r '.[].number'); do
             # Post message to each issue
             curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              -d '{"body": "It's great having you contribute to this project. If you would like to continue contributing to open source and would like to do it with an awesome inclusive community, you should join our Discord Server and our GitHub Organisation - we help and encourage each other to contribute to open source little and often 🤓 . Any questions let us know.\n\nVasudevJaiswal\nMember\nInvitation sent for the GitHub Organisation. Welcome to the community 🎉\n\nDon\'t forget after accepting to make it public so it appears on your GitHub profile for everyone else to see, you can do this by finding your name in the GitHub organisation list and change the dropdown to public https://github.com/orgs/jaidevstudio/people"}' \
+              -d '{"body": "It\'s great having you contribute to this project. If you would like to continue contributing to open source and would like to do it with an awesome inclusive community, you should join our Discord Server and our GitHub Organisation - we help and encourage each other to contribute to open source little and often 🤓 . Any questions let us know.\n\nVasudevJaiswal\nMember\nInvitation sent for the GitHub Organisation. Welcome to the community 🎉\n\nDon\'t forget after accepting to make it public so it appears on your GitHub profile for everyone else to see, you can do this by finding your name in the GitHub organisation list and change the dropdown to public https://github.com/orgs/jaidevstudio/people"}' \
               "https://api.github.com/repos/${{ github.repository }}/issues/$issue/comments"
           done
 
       - name: Invite users to GitHub organization
         run: |
-          # Extract usernames from issues with the label "Please invite me to the GitHub Community Organization"
-          issues=$(curl -s "https://api.github.com/repos/${{ github.repository }}/issues?state=open&labels=Please+invite+me+to+the+GitHub+Community+Organization")
-          
+          # Extract usernames from open issues with the label "invite me to the GitHub Community Organization"
+          issues=$(curl -s "https://api.github.com/repos/${{ github.repository }}/issues?state=open&labels=invite+me+to+the+organisation")
+
           # Loop through open issues and invite users
           for issue in $(echo "$issues" | jq -r '.[].user.login'); do
             # Send invitation to the user
