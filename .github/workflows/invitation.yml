@@ -13,7 +13,7 @@ jobs:
           label: 'invite me to the organization'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           comment: |
-            It's great having you contribute to this project. If you would like to continue contributing to open source and would like to do it with an awesome inclusive community, you should join our [Discord Server](https://discord.gg/wXFWgsAuzR) and our [GitHub Organisation](http://github.com/jaidevstudio) - we help and encourage each other to contribute to open source little and often 🤓. Any questions let us know.
+            It's great having you contribute to this project. If you would like to continue contributing to open source and would like to do it with an awesome inclusive community, you should join our [Discord Server](https://discord.gg/wXFWgsAuzR) and our [GitHub Organisation](http://github.com/jaidevstudio) - we help and encourage each other to contribute to open source little and often 🤓 . Any questions let us know.
         env:
           INVITE_TOKEN: ${{ secrets.INVITE_TOKEN }}
 
