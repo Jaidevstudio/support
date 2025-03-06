@@ -6,32 +6,36 @@ jobs:
   automate_invite:
     runs-on: ubuntu-latest
     steps:
-      - name: Invite on label
-        uses: vj-abigo/invite-on-label@v1.4
-        with:
-          organization: JDStudio
-          label: 'invite me to the organization'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          comment: |
-            It's awesome to have you contribute to this project! If you're passionate about open source and want to join a welcoming and inclusive community, consider becoming part of our GitHub Organization and Discord Server. We actively help and motivate each other to contribute more often 🤓. If you have any questions, feel free to ask!
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-            <b>Invitation sent to join the GitHub Organization. Welcome to the community 🎉</b><br><br>
-            Don't forget to set your membership to public once you've accepted the invitation so it’s visible on your GitHub profile. You can do this by going to https://github.com/orgs/jaidevstudio/people and changing your membership status to public.<br><br>
-            Tips for practising:<br>Collaboration, communication, and adding value are key<br>Hope this helps!
-        env:
-          INVITE_TOKEN: ${{ secrets.INVITE_TOKEN }}
+      - name: Get issue details
+        id: issue
+        run: echo "ISSUE_USER=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
+
+      - name: Send Organization Invitation
+        run: |
+          echo "Inviting user: $ISSUE_USER"
+          curl -X PUT -H "Authorization: token ${{ secrets.INVITE_TOKEN }}" \
+               -H "Accept: application/vnd.github.v3+json" \
+               "https://api.github.com/orgs/JDStudio/memberships/$ISSUE_USER" \
+               -d '{"role":"member"}'
+
+      - name: Verify invitation status
+        run: |
+          echo "Checking if the user has been invited..."
+          RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.INVITE_TOKEN }}" \
+            "https://api.github.com/orgs/JDStudio/invitations")
+          echo "GitHub API Response: $RESPONSE"
 
       - name: Post message and close the issue
         run: |
-          # Get the issue number
           ISSUE_NUMBER=$(echo "${{ github.event.issue.number }}")
 
-          # Post a comment on the issue
           curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d '{"body": "The invitation has been sent to join the GitHub Organization. The issue will now be closed. Feel free to reach out with any questions!"}' \
+            -d "{\"body\": \"The invitation has been sent to @$ISSUE_USER to join the GitHub Organization. If you don't see it, please check your email or visit https://github.com/orgs/JDStudio/invitations.\"}" \
             "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments"
-          
-          # Close the issue
+
           curl -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -d '{"state": "closed"}' \
             "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER"
