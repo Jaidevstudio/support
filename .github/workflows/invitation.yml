@@ -13,7 +13,7 @@ jobs:
           label: 'invite me to the organization'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           comment: |
-            It's great having you contribute to this project. If you would like to continue contributing to open source and would like to do it with an awesome inclusive community, you should join our [Discord Server](https://discord.gg/wXFWgsAuzR) and our [GitHub Organisation](http://github.com/jaidevstudio) - we help and encourage each other to contribute to open source little and often 🤓 . Any questions let us know.
+            It's great having you contribute to this project. If you would like to continue contributing to open source and would like to do it with an awesome inclusive community, you should join our [Discord Server](https://discord.gg/wXFWgsAuzR) and our [GitHub Organisation](http://github.com/jaidevstudio) - we help and encourage each other to contribute to open source little and often 🤓. Any questions let us know.
         env:
           INVITE_TOKEN: ${{ secrets.INVITE_TOKEN }}
 
@@ -24,16 +24,16 @@ jobs:
 
           # Post first comment (invitation)
           curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d '{"body": "Invitation sent for the GitHub Organisation. Welcome to the community 🎉\n\nDon\'t forget after accepting to make it public so it appears on your GitHub profile for everyone else to see, you can do this by finding your name in the GitHub organisation list and change the dropdown to public [GitHub Organisation List](https://github.com/orgs/jaidevstudio/people)\n\n![image](https://user-images.githubusercontent.com/91027746/134157300-21905417-9d2e-44e9-9961-e38cd32ae457.png)"}' \
+            -d '{"body": "Invitation sent for the GitHub Organisation. Welcome to the community 🎉\\n\\nDon\'t forget after accepting to make it public so it appears on your GitHub profile for everyone else to see, you can do this by finding your name in the GitHub organisation list and change the dropdown to public [GitHub Organisation List](https://github.com/orgs/jaidevstudio/people)\\n\\n![image](https://user-images.githubusercontent.com/91027746/134157300-21905417-9d2e-44e9-9961-e38cd32ae457.png)"}' \
             "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments"
-          
+
       - name: Post second comment (Tips)
         run: |
           # Post second comment (tips)
           curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d '{"body": "### Tips for practising:\n\nRemember contributing to open source is not just about code, its about collaboration, communication, and adding value\n\nI hope that helps."}' \
+            -d '{"body": "### Tips for practising:\\n\\nRemember contributing to open source is not just about code, its about collaboration, communication, and adding value\\n\\nI hope that helps."}' \
             "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments"
-          
+
       - name: Close the issue
         run: |
           # Close the issue after sending the comments
