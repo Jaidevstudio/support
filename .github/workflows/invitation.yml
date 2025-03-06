@@ -24,7 +24,7 @@ jobs:
 
           # Post first comment (invitation)
           curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d "{\"body\": \"Invitation sent for the GitHub Organisation. Welcome to the community 🎉\\n\\nDon\'t forget after accepting to make it public so it appears on your GitHub profile for everyone else to see, you can do this by finding your name in the GitHub organisation list and change the dropdown to public [GitHub Organisation List](https://github.com/orgs/jaidevstudio/people)\"}" \
+            -d "{\"body\": \"Invitation sent for the GitHub Organisation. Welcome to the community 🎉\\n\\nDon't forget after accepting to make it public so it appears on your GitHub profile for everyone else to see, you can do this by finding your name in the GitHub organisation list and change the dropdown to public [GitHub Organisation List](https://github.com/orgs/jaidevstudio/people)\"}" \
             "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments"
 
       - name: Post second comment (Tips)
