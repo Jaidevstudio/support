@@ -1,4 +1,4 @@
-name: Invite Users, Close Issues, and Post Message
+name: Invite Users and Close Issues
 
 on:
   workflow_dispatch:  # Allows manual trigger
@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Close all open issues
         env:
-          GITHUB_TOKEN: ${{ secrets.INVITE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           issues=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/issues?state=open" | jq -r '.[].number')
@@ -24,18 +24,28 @@ jobs:
 
       - name: Invite users to GitHub organization
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INVITE_TOKEN: ${{ secrets.INVITE_TOKEN }}
           ORG_NAME: "jaidevstudio"
         run: |
-          issues=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+          issues=$(curl -s -H "Authorization: Bearer $INVITE_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/issues?state=open&labels=invite+me+to+the+organisation")
 
           for username in $(echo "$issues" | jq -r '.[].user.login'); do
-            curl -X PUT -H "Authorization: Bearer $GITHUB_TOKEN" \
-              -H "Accept: application/vnd.github.v3+json" \
-              -d "{\"role\": \"direct_member\"}" \
-              "https://api.github.com/orgs/$ORG_NAME/memberships/$username"
-            echo "Invited $username to $ORG_NAME"
+            # Get user ID from GitHub API
+            user_id=$(curl -s -H "Authorization: Bearer $INVITE_TOKEN" \
+              "https://api.github.com/users/$username" | jq -r '.id')
+
+            # Check if user ID is valid
+            if [[ "$user_id" != "null" && -n "$user_id" ]]; then
+              # Send invitation to the user
+              curl -X POST -H "Authorization: Bearer $INVITE_TOKEN" \
+                -H "Accept: application/vnd.github.v3+json" \
+                -d "{\"invitee_id\": $user_id, \"role\": \"direct_member\"}" \
+                "https://api.github.com/orgs/$ORG_NAME/invitations"
+              echo "Invited $username to $ORG_NAME"
+            else
+              echo "Failed to get user ID for $username"
+            fi
           done
 
       - name: Post message on issues
