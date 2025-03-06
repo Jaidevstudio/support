@@ -28,7 +28,7 @@ jobs:
 
           # Post a comment on the issue
           curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d '{"body": "The invitation has been sent to join the GitHub Organization. The issue will now be closed. Feel free to reach out with any questions!"}' \
+            -d '{"body": "It\'s awesome to have you contribute to this project! If you\'re passionate about open source and want to join a welcoming and inclusive community, consider becoming part of our GitHub Organization and Discord Server. We actively help and motivate each other to contribute more often 🤓. If you have any questions, feel free to ask!\n\n<b>Invitation sent to join the GitHub Organization. Welcome to the community 🎉</b><br><br>Don\'t forget to set your membership to public once you\'ve accepted the invitation so it’s visible on your GitHub profile. You can do this by going to https://github.com/orgs/jaidevstudio/people and changing your membership status to public.<br><br>Tips for practising:<br>Collaboration, communication, and adding value are key<br>Hope this helps!"}' \
             "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments"
           
           # Close the issue
