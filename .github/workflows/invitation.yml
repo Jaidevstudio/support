@@ -15,13 +15,9 @@ jobs:
           comment: |
             It's awesome to have you contribute to this project! If you're passionate about open source and want to join a welcoming and inclusive community, consider becoming part of our GitHub Organization and Discord Server. We actively help and motivate each other to contribute more often 🤓. If you have any questions, feel free to ask!
 
-            Invitation sent to join the GitHub Organization. Welcome to the community 🎉
-
-            Don't forget to set your membership to public once you've accepted the invitation so it’s visible on your GitHub profile. You can do this by going to your GitHub organization and changing your membership status to public.
-
-            Tips for practising:
-            Collaboration, communication, and adding value are key
-            Hope this helps!
+            <b>Invitation sent to join the GitHub Organization. Welcome to the community 🎉</b><br><br>
+            Don't forget to set your membership to public once you've accepted the invitation so it’s visible on your GitHub profile. You can do this by going to https://github.com/orgs/jaidevstudio/people and changing your membership status to public.<br><br>
+            Tips for practising:<br>Collaboration, communication, and adding value are key<br>Hope this helps!
         env:
           INVITE_TOKEN: ${{ secrets.INVITE_TOKEN }}
 
@@ -32,7 +28,7 @@ jobs:
 
           # Post a comment on the issue
           curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d '{"body": "It\'s awesome to have you contribute to this project! If you\'re passionate about open source and want to join a welcoming and inclusive community, consider becoming part of our GitHub Organization and Discord Server. We actively help and motivate each other to contribute more often 🤓. If you have any questions, feel free to ask!\n\nInvitation sent to join the GitHub Organization. Welcome to the community 🎉\n\nDon\'t forget to set your membership to public once you\'ve accepted the invitation so it\'s visible on your GitHub profile. You can do this by going to your GitHub organization and changing your membership status to public.\n\nTips for practising:\nCollaboration, communication, and adding value are key\nHope this helps!"}' \
+            -d '{"body": "The invitation has been sent to join the GitHub Organization. The issue will now be closed. Feel free to reach out with any questions!"}' \
             "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments"
           
           # Close the issue
