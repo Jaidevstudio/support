@@ -19,8 +19,8 @@ jobs:
 
       - name: Post first comment (Invite details)
         run: |
-          # Get the issue number
-          ISSUE_NUMBER=$(echo "${{ github.event.issue.number }}")
+          # Get the issue number using the GitHub event
+          ISSUE_NUMBER="${{ github.event.issue.number }}"
 
           # Post first comment (invitation)
           curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
@@ -29,9 +29,6 @@ jobs:
           
       - name: Post second comment (Tips)
         run: |
-          # Get the issue number
-          ISSUE_NUMBER=$(echo "${{ github.event.issue.number }}")
-
           # Post second comment (tips)
           curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -d '{"body": "### Tips for practising:\n\nRemember contributing to open source is not just about code, its about collaboration, communication, and adding value\n\nI hope that helps."}' \
