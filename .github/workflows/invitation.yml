@@ -22,3 +22,18 @@ jobs:
             Tips for practising:<br>It's about collaboration, communication, and adding value<br>I hope that helps
         env:
           INVITE_TOKEN: ${{ secrets.INVITE_TOKEN }}
+
+      - name: Post message and close the issue
+        run: |
+          # Get the issue number
+          ISSUE_NUMBER=$(echo "${{ github.event.issue.number }}")
+
+          # Post a message on the issue
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d '{"body": "The invitation has been sent to join the GitHub Organization. The issue will now be closed. Feel free to reach out with any questions!"}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments"
+          
+          # Close the issue
+          curl -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d '{"state": "closed"}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER"
