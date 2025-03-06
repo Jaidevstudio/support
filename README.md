@@ -5,7 +5,7 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Raise an [issue to join the JD Studio GitHub organisation](https://github.com/Jaidevstudio/support/issues/new?assignees=&labels=invite+me+to+the+organisation&template=invitation.yml&title=Please+invite+me+to+the+GitHub+Community+Organization). ##
 
-### Some vague idea of how we could turn this into a support channel.
+### Some vague idea of how we could turn this into a support channel.✨
 
 Imagine the scenario where you are helping a stranger, a friend, or a colleague on Discord / MS Teams / Slack / YouTube, etc. They may have found an old article from 5+ years ago about Docker that is not supported or a Node.js article that isn't supported in Node v14. That sort of thing...
 
@@ -15,7 +15,7 @@ The unfortunate thing about this is that it lacks a write-up on what was used. I
 
 Unfortunately, StackOverflow has a bit of a broken reputation system where folks with the "worst accepted answer" can actually start to get privileges to do more things.
 
-### Ideas
+### Ideas✨
 
 Get your ideas in the GitHub Issue Queue!
 
@@ -26,7 +26,7 @@ We could then have folks to have their own "support" repository and be able to P
 Please check out the [issue queue](https://github.com/jaidevstudio/support/issues) for sticking issues with this and we can all pair on this.
 
 ---
- ## Guide
+ ## Guide✨
 
    - Actions go under [issues](https://github.com/jaidevstudio/support/issues)
    
@@ -45,7 +45,7 @@ Please check out the [issue queue](https://github.com/jaidevstudio/support/issue
       Feel free to check out other cool repositories of JD Studio 
       <a href='https://github.com/jaidevstudio'>here</a>.
 
-## FAQ
+## FAQ✨
 - **What is a GitHub Organization?** Essentially it's a way to group many repositories in an entity called an organization. An organization also allows us to group people who contribute and are a part of the community. Some examples would be: [Netflix](https://github.com/Netflix), [Facebook](https://github.com/facebook) and of course [JD Studio](https://github.com/jaidevstudio).
 Learn more on [GitHub docs](https://docs.github.com/en/github/setting-up-and-managing-organizations-and-teams/about-organizations).
 - **How do I join the Github Organization?** Raise an issue on this repository asking to join ([invite me](https://github.com/Jaidevstudio/support/issues/new?assignees=&labels=invite+me+to+the+organisation&template=invitation.yml&title=Please+invite+me+to+the+GitHub+Community+Organization)).
@@ -75,6 +75,6 @@ Learn more on [GitHub docs](https://docs.github.com/en/github/setting-up-and-man
   - [Open source tips from  RoBot Jai](https://github.com/jaidevstudiorobot)![Robot Icon](https://avatars.githubusercontent.com/u/91027746?v=4)
 - **How to look for an open-source project to contribute?** Check [Finding Open Source Projects](./tips/finding-open-source-projects.md)
 
-## Socials
+## Socials✨
 
 Join our Discord community [here](https://discord.gg/2HrRKQwV)   
