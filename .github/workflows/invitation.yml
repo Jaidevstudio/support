@@ -1,3 +1,5 @@
+name: Invite User to Organization
+
 on:
   issues:
     types: [labeled]
@@ -16,26 +18,35 @@ jobs:
       - name: Send Organization Invitation
         run: |
           echo "Inviting user: $ISSUE_USER"
-          curl -X PUT -H "Authorization: token ${{ secrets.INVITE_TOKEN }}" \
-               -H "Accept: application/vnd.github.v3+json" \
-               "https://api.github.com/orgs/JDStudio/memberships/$ISSUE_USER" \
-               -d '{"role":"member"}'
+          RESPONSE=$(curl -s -o response.json -w "%{http_code}" -X PUT \
+            -H "Authorization: token ${{ secrets.INVITE_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/orgs/Jaidevstudio/memberships/$ISSUE_USER" \
+            -d '{"role":"member"}')
+          
+          echo "GitHub API Response: $(cat response.json)"
+          if [[ "$RESPONSE" -ne 200 && "$RESPONSE" -ne 201 ]]; then
+            echo "Failed to send invitation"
+            exit 1
+          fi
 
       - name: Verify invitation status
         run: |
           echo "Checking if the user has been invited..."
           RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.INVITE_TOKEN }}" \
-            "https://api.github.com/orgs/JDStudio/invitations")
+            "https://api.github.com/orgs/Jaidevstudio/invitations")
           echo "GitHub API Response: $RESPONSE"
 
       - name: Post message and close the issue
         run: |
-          ISSUE_NUMBER=$(echo "${{ github.event.issue.number }}")
-
+          ISSUE_NUMBER=${{ github.event.issue.number }}
+          
           curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d "{\"body\": \"The invitation has been sent to @$ISSUE_USER to join the GitHub Organization. If you don't see it, please check your email or visit https://github.com/orgs/JDStudio/invitations.\"}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d "{\"body\": \"The invitation has been sent to @$ISSUE_USER to join the GitHub Organization. If you don't see it, please check your email or visit https://github.com/orgs/Jaidevstudio/invitations.\"}" \
             "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments"
 
           curl -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
             -d '{"state": "closed"}' \
             "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER"
