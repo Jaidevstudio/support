@@ -1,8 +1,7 @@
 ---
 name: Invite User to Organization
 
-# yamllint disable-line rule:truthy
-on:
+"on":
   issues:
     types: [labeled]
 
