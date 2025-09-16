@@ -1,5 +1,7 @@
+---
 name: Invite User to Organization
 
+# yamllint disable-line rule:truthy
 on:
   issues:
     types: [labeled]
@@ -7,13 +9,15 @@ on:
 jobs:
   automate_invite:
     runs-on: ubuntu-latest
+    if: contains(github.event.label.name, 'invite me to the organisation')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Get issue details
         id: issue
-        run: echo "ISSUE_USER=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
+        run: |
+          echo "ISSUE_USER=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
 
       - name: Send Organization Invitation
         run: |
@@ -23,7 +27,7 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/orgs/Jaidevstudio/memberships/$ISSUE_USER" \
             -d '{"role":"member"}')
-          
+
           echo "GitHub API Response: $(cat response.json)"
           if [[ "$RESPONSE" -ne 200 && "$RESPONSE" -ne 201 ]]; then
             echo "Failed to send invitation"
@@ -40,13 +44,15 @@ jobs:
       - name: Post message and close the issue
         run: |
           ISSUE_NUMBER=${{ github.event.issue.number }}
-          
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            -d "{\"body\": \"The invitation has been sent to @$ISSUE_USER to join the GitHub Organization. If you don't see it, please check your email or visit https://github.com/orgs/Jaidevstudio/invitations.\"}" \
+            -d "{\"body\": \"🎉 The invitation has been sent to @$ISSUE_USER to join the GitHub Organization. If you don't see it, please check your email or visit https://github.com/orgs/Jaidevstudio/invitations.\"}" \
             "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments"
 
-          curl -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          curl -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             -d '{"state": "closed"}' \
             "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER"
