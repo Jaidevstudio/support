@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="200" viewBox="0 0 420 200">
+  <defs>
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#f8fafc"/>
+    </linearGradient>
+    <linearGradient id="topBar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6d28d9"/>
+      <stop offset="100%" style="stop-color:#2563eb"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-5%" y="-5%" width="115%" height="125%">
+      <feDropShadow dx="4" dy="8" stdDeviation="8" flood-color="#6d28d9" flood-opacity="0.1"/>
+    </filter>
+    <linearGradient id="stepBg1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6d28d9;stop-opacity:0.08"/>
+      <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:0"/>
+    </linearGradient>
+    <linearGradient id="stepBg2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2563eb;stop-opacity:0.08"/>
+      <stop offset="100%" style="stop-color:#2563eb;stop-opacity:0"/>
+    </linearGradient>
+    <linearGradient id="stepBg3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0891b2;stop-opacity:0.08"/>
+      <stop offset="100%" style="stop-color:#0891b2;stop-opacity:0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Card body -->
+  <rect x="10" y="10" width="400" height="180" rx="14" fill="url(#cardBg)" stroke="#e2e8f0" stroke-width="1" filter="url(#cardShadow)"/>
+  <rect x="10" y="10" width="400" height="4" rx="2" fill="url(#topBar)"/>
+
+  <!-- Title -->
+  <text x="210" y="48" font-family="'Segoe UI', Arial, sans-serif" font-size="15" font-weight="700" fill="#1e293b" text-anchor="middle" letter-spacing="1">HOW TO JOIN</text>
+  <rect x="50" y="58" width="320" height="1" fill="#e2e8f0"/>
+
+  <!-- Step 1 -->
+  <rect x="30" y="70" width="360" height="30" rx="6" fill="url(#stepBg1)"/>
+  <circle cx="50" cy="85" r="10" fill="#6d28d9" opacity="0.15"/>
+  <text x="50" y="90" font-family="'Segoe UI', Arial, sans-serif" font-size="12" font-weight="700" fill="#6d28d9" text-anchor="middle">1</text>
+  <text x="75" y="90" font-family="'Segoe UI', Arial, sans-serif" font-size="13" fill="#334155">Open an invitation issue using the template</text>
+
+  <!-- Step 2 -->
+  <rect x="30" y="108" width="360" height="30" rx="6" fill="url(#stepBg2)"/>
+  <circle cx="50" cy="123" r="10" fill="#2563eb" opacity="0.15"/>
+  <text x="50" y="128" font-family="'Segoe UI', Arial, sans-serif" font-size="12" font-weight="700" fill="#2563eb" text-anchor="middle">2</text>
+  <text x="75" y="128" font-family="'Segoe UI', Arial, sans-serif" font-size="13" fill="#334155">Fill out the form with your details</text>
+
+  <!-- Step 3 -->
+  <rect x="30" y="146" width="360" height="30" rx="6" fill="url(#stepBg3)"/>
+  <circle cx="50" cy="161" r="10" fill="#0891b2" opacity="0.15"/>
+  <text x="50" y="166" font-family="'Segoe UI', Arial, sans-serif" font-size="12" font-weight="700" fill="#0891b2" text-anchor="middle">3</text>
+  <text x="75" y="166" font-family="'Segoe UI', Arial, sans-serif" font-size="13" fill="#334155">Receive your invite automatically</text>
+</svg>

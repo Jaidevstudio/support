@@ -1,0 +1,257 @@
+name: Auto Invite Pipeline
+
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  validate_and_invite:
+    if: contains(github.event.issue.labels.*.name, 'invite me to the organisation')
+    runs-on: ubuntu-latest
+    env:
+      ORG_NAME: Jaidevstudio
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      ISSUE_USER: ${{ github.event.issue.user.login }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Step 1: Validate the user ──
+      - name: Validate GitHub user exists
+        id: validate
+        env:
+          GH_TOKEN: ${{ secrets.INVITE_TOKEN }}
+        run: |
+          echo "Validating user: $ISSUE_USER"
+
+          USER_DATA=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/users/$ISSUE_USER")
+
+          USER_ID=$(echo "$USER_DATA" | jq -r '.id')
+          USER_TYPE=$(echo "$USER_DATA" | jq -r '.type')
+          USER_NAME=$(echo "$USER_DATA" | jq -r '.name // .login')
+          AVATAR_URL=$(echo "$USER_DATA" | jq -r '.avatar_url')
+
+          if [[ "$USER_ID" == "null" || -z "$USER_ID" ]]; then
+            echo "valid=false" >> $GITHUB_OUTPUT
+            echo "reason=GitHub user not found" >> $GITHUB_OUTPUT
+          elif [[ "$USER_TYPE" == "Bot" ]]; then
+            echo "valid=false" >> $GITHUB_OUTPUT
+            echo "reason=Bot accounts cannot be invited" >> $GITHUB_OUTPUT
+          else
+            echo "valid=true" >> $GITHUB_OUTPUT
+            echo "user_id=$USER_ID" >> $GITHUB_OUTPUT
+            echo "user_name=$USER_NAME" >> $GITHUB_OUTPUT
+            echo "avatar_url=$AVATAR_URL" >> $GITHUB_OUTPUT
+          fi
+
+      # ── Step 2: Handle invalid user ──
+      - name: Reject invalid request
+        if: steps.validate.outputs.valid == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REASON="${{ steps.validate.outputs.reason }}"
+
+          curl -s -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d "{\"body\": \"### Request Could Not Be Processed\n\nHello @$ISSUE_USER,\n\nWe were unable to process your invitation request.\n\n**Reason:** $REASON\n\nPlease verify your details and submit a new request if needed. If you believe this is an error, reach out on [Discord](https://discord.gg/wXFWgsAuzR).\n\n---\n*Automated by Jaidevstudio Invitation Pipeline*\"}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments"
+
+          curl -s -X PATCH \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"state": "closed", "state_reason": "not_planned"}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER"
+
+          # Add rejection label
+          curl -s -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"labels": ["invitation-failed"]}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/labels"
+
+      # ── Step 3: Check if already a member ──
+      - name: Check existing membership
+        if: steps.validate.outputs.valid == 'true'
+        id: membership
+        env:
+          GH_TOKEN: ${{ secrets.INVITE_TOKEN }}
+        run: |
+          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/orgs/$ORG_NAME/members/$ISSUE_USER")
+
+          if [[ "$STATUS_CODE" == "204" ]]; then
+            echo "is_member=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_member=false" >> $GITHUB_OUTPUT
+          fi
+
+      # ── Step 4: Handle already a member ──
+      - name: Already a member response
+        if: steps.validate.outputs.valid == 'true' && steps.membership.outputs.is_member == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -s -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d "{\"body\": \"### You Are Already a Member\n\nHello @$ISSUE_USER,\n\nGreat news -- you are already a member of **$ORG_NAME**.\n\nIf your membership is set to private, you can make it public here:\nhttps://github.com/orgs/$ORG_NAME/people\n\nFind your name, click the dropdown, and select **Public**.\n\n---\n*Automated by Jaidevstudio Invitation Pipeline*\"}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments"
+
+          curl -s -X PATCH \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"state": "closed", "state_reason": "completed"}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER"
+
+      # ── Step 5: Send the invitation ──
+      - name: Send organization invitation
+        if: steps.validate.outputs.valid == 'true' && steps.membership.outputs.is_member == 'false'
+        id: invite
+        env:
+          GH_TOKEN: ${{ secrets.INVITE_TOKEN }}
+        run: |
+          USER_ID="${{ steps.validate.outputs.user_id }}"
+
+          RESPONSE=$(curl -s -o response.json -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d "{\"invitee_id\": $USER_ID, \"role\": \"direct_member\"}" \
+            "https://api.github.com/orgs/$ORG_NAME/invitations")
+
+          cat response.json
+
+          if [[ "$RESPONSE" == "201" || "$RESPONSE" == "200" ]]; then
+            echo "invited=true" >> $GITHUB_OUTPUT
+          elif [[ "$RESPONSE" == "422" ]]; then
+            # 422 usually means invitation already pending
+            echo "invited=pending" >> $GITHUB_OUTPUT
+          else
+            echo "invited=false" >> $GITHUB_OUTPUT
+            echo "error_code=$RESPONSE" >> $GITHUB_OUTPUT
+          fi
+
+      # ── Step 6: Post welcome comment with onboarding info ──
+      - name: Post welcome message
+        if: steps.invite.outputs.invited == 'true' || steps.invite.outputs.invited == 'pending'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USER_NAME: ${{ steps.validate.outputs.user_name }}
+          AVATAR: ${{ steps.validate.outputs.avatar_url }}
+        run: |
+          if [[ "${{ steps.invite.outputs.invited }}" == "pending" ]]; then
+            STATUS_LINE="An invitation was already pending for your account."
+          else
+            STATUS_LINE="Your invitation has been sent successfully."
+          fi
+
+          BODY=$(cat <<'WELCOME_EOF'
+          ## Welcome to Jaidevstudio, @ISSUE_USER_PLACEHOLDER
+
+          STATUSLINE_PLACEHOLDER
+
+          ---
+
+          ### Getting Started
+
+          | Step | Action | Link |
+          |:-----|:-------|:-----|
+          | **1. Accept Invitation** | Check your email or click the link | [Accept Invitation](https://github.com/orgs/Jaidevstudio/invitation) |
+          | **2. Go Public** | Set your membership visibility to Public | [Organization People](https://github.com/orgs/Jaidevstudio/people) |
+          | **3. Join Discord** | Connect with fellow developers | [Discord Server](https://discord.gg/wXFWgsAuzR) |
+          | **4. First Contribution** | Find a `good first issue` and submit a PR | [Browse Issues](https://github.com/search?q=org%3AJaidevstudio+label%3A%22good+first+issue%22&type=issues) |
+
+          ---
+
+          ### Our Projects
+
+          | Project | What It Does |
+          |:--------|:-------------|
+          | [MotherTongue Connect To World](https://github.com/Jaidevstudio/MotherTongue) | Flagship -- building interpreters for every mother language |
+          | [Unique Github Profiles](https://github.com/Jaidevstudio/Unique-Github-Profiles) | Curated collection of inspiring GitHub profile READMEs |
+          | [Support](https://github.com/Jaidevstudio/support) | Community hub for help, reviews, and discussions |
+          | [About](https://github.com/Jaidevstudio/about) | Our mission, values, and community guidelines |
+
+          ---
+
+          ### How to Contribute
+
+          ```
+          Fork --> Branch --> Code --> PR --> Review --> Merge
+          ```
+
+          1. **Fork** the repo you want to work on
+          2. **Create a branch** -- `git checkout -b my-feature`
+          3. **Make your changes** and commit with clear messages
+          4. **Open a Pull Request** with a description of what you did
+          5. A maintainer will review and merge your work
+
+          ---
+
+          We are glad to have you. Welcome aboard.
+
+          *-- Jaidevstudio Invitation System*
+          WELCOME_EOF
+          )
+
+          BODY="${BODY//ISSUE_USER_PLACEHOLDER/$ISSUE_USER}"
+          BODY="${BODY//STATUSLINE_PLACEHOLDER/$STATUS_LINE}"
+
+          # Escape for JSON
+          BODY_JSON=$(echo "$BODY" | jq -Rs .)
+
+          curl -s -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d "{\"body\": $BODY_JSON}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments"
+
+          # Update labels: remove pending-review, add invitation-sent
+          curl -s -X DELETE \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/labels/pending-review" || true
+
+          curl -s -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"labels": ["invitation-sent"]}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/labels"
+
+          # Close the issue
+          curl -s -X PATCH \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"state": "closed", "state_reason": "completed"}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER"
+
+      # ── Step 7: Handle invitation failure ──
+      - name: Handle invitation failure
+        if: steps.invite.outputs.invited == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ERROR_CODE="${{ steps.invite.outputs.error_code }}"
+
+          curl -s -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d "{\"body\": \"### Invitation Could Not Be Sent\n\nHello @$ISSUE_USER,\n\nWe encountered an issue while sending your invitation (error code: $ERROR_CODE).\n\nA maintainer has been notified and will process your request manually.\n\nIn the meantime, feel free to join our [Discord](https://discord.gg/wXFWgsAuzR) community.\n\n---\n*Automated by Jaidevstudio Invitation Pipeline*\"}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments"
+
+          # Add needs-manual-review label
+          curl -s -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"labels": ["needs-manual-review"]}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/labels"

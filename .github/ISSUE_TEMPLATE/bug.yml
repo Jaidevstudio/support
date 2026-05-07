@@ -1,40 +1,103 @@
-name: Bug report
-description: Create a bug report to help us address errors in the repository
-title: "[BUG] <bug description>"
-labels: [bug]
+name: Bug Report
+description: Found something broken? Report it here so we can fix it.
+title: "[BUG] "
+labels: [bug, needs-triage]
+assignees: []
+
 body:
-  - type: textarea
-    id: bugdescription
-    attributes:
-      label: Description of the bug
-    validations:
-      required: true
-  - type: input
-    id: stack
-    attributes:
-      label: Project stack or language (e.g. front-end)
-    validations:
-      required: true
-  - type: textarea
-    id: workingenvironment
-    attributes:
-      label: Working Environment (e.g. operating system, browser, device)
-    validations:
-      required: true
-  - type: textarea
-    id: screenshots
-    attributes:
-      label: Please add screenshots (if applicable)
-    validations:
-      required: false
-  - type: textarea
-    id: context
-    attributes:
-      label: Add any other context about the problem here
-    validations:
-      required: false
   - type: markdown
     attributes:
       value: |
-        You can also join our Discord community [here](https://discord.gg/wXFWgsAuzR)
-        Feel free to check out other cool repositories of the JD Studio Community [here](https://github.com/jaidevstudio)
+        ### Bug Report
+
+        Thank you for taking the time to report this issue.
+        Please fill in as much detail as possible so we can reproduce and fix the problem.
+
+        ---
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug
+      placeholder: When I try to [action], I expected [expected result], but instead [actual result] happened.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Detailed steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See the error
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this bug?
+      options:
+        - Low (cosmetic issue, minor inconvenience)
+        - Medium (feature partially broken but workaround exists)
+        - High (feature completely broken, no workaround)
+        - Critical (data loss, security issue, or blocks all usage)
+    validations:
+      required: true
+
+  - type: input
+    id: project
+    attributes:
+      label: Which project or repository?
+      description: Name of the repository where the bug occurs
+      placeholder: e.g. MotherTongue, support, Unique-Github-Profiles
+    validations:
+      required: true
+
+  - type: input
+    id: stack
+    attributes:
+      label: Tech stack or language
+      description: What technology is involved?
+      placeholder: e.g. JavaScript, Python, HTML/CSS, GitHub Actions
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Your system details
+      placeholder: |
+        - OS: e.g. Windows 11, macOS 14, Ubuntu 24.04
+        - Browser: e.g. Chrome 125, Firefox 127
+        - Node.js version (if applicable): e.g. v20.12
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or Logs
+      description: Attach screenshots, error messages, or console logs if available. Drag and drop images here.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information that might help us understand and fix the issue
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        Need help faster? Ask in our [Discord](https://discord.gg/wXFWgsAuzR).

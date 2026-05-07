@@ -1,20 +1,83 @@
 name: Resume Review
-description: Please review my resume on a live stream
-title: "[REVIEW]"
-labels: [resume review, live stream review]
+description: Get community feedback on your developer resume (remove all personal data first)
+title: "[RESUME REVIEW] "
+labels: [resume review, community-review]
+assignees: []
+
 body:
   - type: markdown
     attributes:
-      value: "**Remove all personal data, otherwise, the resume will be deleted**"
+      value: |
+        ### Resume Review
+
+        Get constructive feedback on your developer resume from the community.
+
+        **Privacy Notice:** Remove all personal information (phone number, home address, email) before submitting. Resumes containing personal data will be deleted immediately for your safety.
+
+        ---
+
   - type: input
-    id: link
+    id: resume-link
     attributes:
-      label: Resume link
-      placeholder: "e.g.: https://drive.google.com/file/d/<file-id>/view"
+      label: Resume Link
+      description: Link to your resume (Google Drive, Dropbox, etc. -- make sure it is publicly accessible)
+      placeholder: https://drive.google.com/file/d/your-file-id/view
     validations:
       required: true
+
+  - type: dropdown
+    id: target-role
+    attributes:
+      label: Target Role
+      description: What kind of position are you applying for?
+      options:
+        - Internship
+        - Junior or Entry-Level Developer
+        - Mid-Level Developer
+        - Senior Developer
+        - Full-Stack Developer
+        - Frontend Developer
+        - Backend Developer
+        - DevOps or SRE
+        - Data Science or ML
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: review-focus
+    attributes:
+      label: What should we focus on?
+      multiple: true
+      options:
+        - Overall layout and formatting
+        - Technical skills section
+        - Project descriptions
+        - Work experience descriptions
+        - ATS compatibility
+        - Content clarity and impact
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any specific concerns or goals for your resume?
+      placeholder: e.g. I am applying to FAANG companies, is my resume competitive?
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: privacy-check
+    attributes:
+      label: Privacy Confirmation
+      options:
+        - label: I have removed all personal information (phone, address, email) from the resume
+          required: true
+
   - type: markdown
     attributes:
       value: |
-       You can also join our Discord community [here](https://discord.gg/wXFWgsAuzR)
-        Feel free to check out other cool repositories of the JD Studio Community [here](https://github.com/jaidevstudio)
+        ---
+        Need help with your resume? Ask in [Discord](https://discord.gg/wXFWgsAuzR).

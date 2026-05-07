@@ -1,20 +1,72 @@
 name: Portfolio Review
-description: Please review my Portfolio on a livestream
-title: "[REVIEW]"
-labels: [portfolio review, live stream review]
+description: Get community feedback on your developer portfolio website
+title: "[PORTFOLIO REVIEW] "
+labels: [portfolio review, community-review]
+assignees: []
+
 body:
   - type: markdown
     attributes:
-      value: "**Please ensure that you don't have any personal details in your Portfolio that you don't want to share publicly.**"
+      value: |
+        ### Portfolio Review
+
+        Submit your portfolio for constructive feedback on design, content, and presentation.
+
+        **Important:** Make sure you are comfortable sharing any information visible on your portfolio publicly.
+
+        ---
+
   - type: input
-    id: link
+    id: portfolio-link
     attributes:
-      label: Portfolio link
-      placeholder: "e.g.: https://<your-username>.github.io/portfolio"
+      label: Portfolio Link
+      description: URL to your portfolio website
+      placeholder: https://yourname.dev
     validations:
       required: true
+
+  - type: dropdown
+    id: review-focus
+    attributes:
+      label: What should we focus on?
+      multiple: true
+      options:
+        - Visual design and aesthetics
+        - Content and copywriting
+        - Project showcase section
+        - Mobile responsiveness
+        - Loading speed and performance
+        - Overall user experience
+        - Hiring readiness
+    validations:
+      required: true
+
+  - type: dropdown
+    id: built-with
+    attributes:
+      label: Built with
+      options:
+        - HTML/CSS/JS (vanilla)
+        - React or Next.js
+        - Vue or Nuxt
+        - Svelte or SvelteKit
+        - WordPress or CMS
+        - Website builder (Wix, Squarespace, etc.)
+        - Other
+    validations:
+      required: false
+
+  - type: textarea
+    id: specific-questions
+    attributes:
+      label: Specific questions
+      description: Is there anything particular you want feedback on?
+      placeholder: e.g. Does the hero section grab attention? Is the project layout clear?
+    validations:
+      required: false
+
   - type: markdown
     attributes:
       value: |
-        You can also join our Discord community [here](https://discord.gg/wXFWgsAuzR)
-        Feel free to check out other cool repositories of the JD Studio Community [here](https://github.com/jaidevstudio)
+        ---
+        Get more feedback on [Discord](https://discord.gg/wXFWgsAuzR).

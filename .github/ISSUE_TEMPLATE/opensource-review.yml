@@ -1,20 +1,96 @@
 name: Open Source Project Review
-description: Please review my project on a livestream
-title: "[REVIEW] <project name here>"
-labels: [open source review, live stream review,Vasudev Jaiswal Developer Review]
+description: Submit your project for community review and constructive feedback
+title: "[PROJECT REVIEW] "
+labels: [open source review, community-review]
+assignees: []
+
 body:
   - type: markdown
     attributes:
-      value: "Your project doesn't have to be hosted at GitHub, it can also be on GitLab or other VCS"
+      value: |
+        ### Open Source Project Review
+
+        Submit your project for constructive feedback from fellow developers.
+        We review code quality, documentation, architecture, and overall presentation.
+
+        Your project does not need to be on GitHub -- GitLab, Bitbucket, and other platforms are welcome.
+
+        ---
+
   - type: input
-    id: link
+    id: project-link
     attributes:
-      label: Project link
-      placeholder: https://github.com/<your-username>/<project-name>
+      label: Project Link
+      description: URL to your repository or project
+      placeholder: https://github.com/your-username/your-project
     validations:
       required: true
+
+  - type: input
+    id: live-demo
+    attributes:
+      label: Live Demo (if available)
+      description: Link to a deployed version or demo
+      placeholder: https://your-project.netlify.app
+    validations:
+      required: false
+
+  - type: dropdown
+    id: tech-stack
+    attributes:
+      label: Primary Tech Stack
+      multiple: true
+      options:
+        - HTML/CSS
+        - JavaScript/TypeScript
+        - Python
+        - Java
+        - C/C++
+        - Go
+        - Rust
+        - React/Next.js
+        - Node.js
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: review-focus
+    attributes:
+      label: What should we review?
+      description: Select the areas where you want the most feedback
+      multiple: true
+      options:
+        - Code quality and structure
+        - README and documentation
+        - Architecture and design patterns
+        - UI/UX (if applicable)
+        - Performance
+        - Security
+        - Testing
+        - CI/CD setup
+    validations:
+      required: true
+
+  - type: textarea
+    id: project-description
+    attributes:
+      label: Brief Project Description
+      description: What does your project do and who is it for?
+      placeholder: My project is a [what] that helps [who] to [goal].
+    validations:
+      required: true
+
+  - type: textarea
+    id: specific-concerns
+    attributes:
+      label: Specific questions or concerns
+      description: Anything particular you want reviewers to focus on?
+    validations:
+      required: false
+
   - type: markdown
     attributes:
       value: |
-        You can also join our Discord community [here](https://discord.gg/wXFWgsAuzR)
-        Feel free to check out other cool repositories of the JD Studio Community [here](https://github.com/jaidevstudio)
+        ---
+        Join the conversation on [Discord](https://discord.gg/wXFWgsAuzR).

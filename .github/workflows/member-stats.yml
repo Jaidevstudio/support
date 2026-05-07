@@ -1,0 +1,95 @@
+name: Member Stats Dashboard
+
+on:
+  schedule:
+    # Run daily at midnight UTC
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update_stats:
+    runs-on: ubuntu-latest
+    env:
+      ORG_NAME: Jaidevstudio
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Gather organization statistics
+        env:
+          GH_TOKEN: ${{ secrets.INVITE_TOKEN }}
+        run: |
+          echo "Gathering organization statistics..."
+
+          # Get member count
+          MEMBERS=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/orgs/$ORG_NAME" | jq -r '.public_members_url')
+
+          MEMBER_LIST=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/orgs/$ORG_NAME/members?per_page=1" \
+            -I 2>/dev/null | grep -i 'link:' | grep -oP '&page=\K[0-9]+(?=>; rel="last")' || echo "unknown")
+
+          # Get org details
+          ORG_DATA=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/orgs/$ORG_NAME")
+
+          FOLLOWERS=$(echo "$ORG_DATA" | jq -r '.followers')
+          PUBLIC_REPOS=$(echo "$ORG_DATA" | jq -r '.public_repos')
+
+          # Get pending invitations count
+          PENDING=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/orgs/$ORG_NAME/invitations" | jq 'length')
+
+          # Get open issue count
+          OPEN_ISSUES=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/issues?state=open&labels=invite+me+to+the+organisation" | jq 'length')
+
+          # Get recent joins (issues closed in last 7 days)
+          WEEK_AGO=$(date -d '7 days ago' -u +%Y-%m-%dT%H:%M:%SZ)
+          RECENT_JOINS=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/issues?state=closed&labels=invitation-sent&since=$WEEK_AGO" | jq 'length')
+
+          # Generate stats file
+          cat > STATS.md << EOF
+          # Jaidevstudio Organization Statistics
+
+          Last updated: $(date -u +"%Y-%m-%d %H:%M UTC")
+
+          ## Overview
+
+          | Metric | Value |
+          |--------|-------|
+          | Followers | $FOLLOWERS |
+          | Public Repositories | $PUBLIC_REPOS |
+          | Pending Invitations | $PENDING |
+          | Open Join Requests | $OPEN_ISSUES |
+          | Joined This Week | $RECENT_JOINS |
+
+          ## Invitation Pipeline Status
+
+          - Auto-invite workflow: Active
+          - Bulk processing: Every 6 hours
+          - Stale cleanup: Weekly (Mondays)
+          - Stats update: Daily
+
+          ## Links
+
+          - Organization: https://github.com/Jaidevstudio
+          - Invitation Request: https://github.com/Jaidevstudio/support/issues/new?template=invitation.yml
+          - Discord: https://discord.gg/wXFWgsAuzR
+          EOF
+
+          # Remove leading whitespace from heredoc
+          sed -i 's/^          //' STATS.md
+
+      - name: Commit stats update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add STATS.md
+          git diff --cached --quiet || git commit -m "Update organization statistics [skip ci]"
+          git push

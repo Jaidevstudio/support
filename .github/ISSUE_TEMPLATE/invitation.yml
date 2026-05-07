@@ -1,41 +1,119 @@
-name: Invitation to the GitHub Community Organization
-description: I would like to be part of the awesome community
-title: "Please invite me to the GitHub Community Organization"
-labels: [invite me to the organisation]
-body:
-  - type: input
-    id: name
-    attributes:
-      label: Name
-      placeholder: Insert your name here
-    validations:
-      required: true
-  - type: input
-    id: discordname
-    attributes:
-      label: Discord Username (if applicable)
-      placeholder: Insert your Discord username here
-    validations:
-      required: false
-  - type: textarea
-    id: Additional
-    type: input
-    id: Email id.
-    attributes:
-      label: Email (if applicable)
-      placeholder: Insert your Email id.
-    validations:
-      required: false
-    type: textarea
-    id: Additional
+name: Join the Jaidevstudio Organization
+description: Request an invitation to become part of the Jaidevstudio open-source community. Processed automatically within minutes.
+title: "Invitation Request: [YOUR NAME]"
+labels: ["invite me to the organisation", "pending-review"]
+assignees: []
 
-    attributes:
-      label: Additional Context
-      description: Where did you meet JD Studio ? What do you like about this community/Why do you want to join?
-    validations:
-      required: true
+body:
   - type: markdown
     attributes:
       value: |
-        You can also join our Discord community [here](https://discord.gg/wXFWgsAuzR)
-        Feel free to check out other cool repositories of the JD Studio Community [here](https://github.com/jaidevstudio)
+        ### Welcome to Jaidevstudio
+
+        Thanks for your interest in joining our community. Fill out the form below and our automated system will process your request within minutes.
+
+        **What happens next:**
+        - Your GitHub account is validated
+        - An organization invitation is sent to you
+        - You receive a welcome message with onboarding steps
+        - This issue is closed automatically
+
+        ---
+
+  - type: input
+    id: full-name
+    attributes:
+      label: Full Name
+      description: Your real name or preferred display name
+      placeholder: e.g. Vasudev Jaiswal
+    validations:
+      required: true
+
+  - type: input
+    id: github-username
+    attributes:
+      label: GitHub Username
+      description: Must match the account filing this issue
+      placeholder: e.g. VasudevJaiswal
+    validations:
+      required: true
+
+  - type: input
+    id: email
+    attributes:
+      label: Email Address
+      description: Optional -- only used if GitHub invitation delivery fails
+      placeholder: e.g. you@example.com
+    validations:
+      required: false
+
+  - type: input
+    id: discord-username
+    attributes:
+      label: Discord Username
+      description: Optional -- connect with us at https://discord.gg/wXFWgsAuzR
+      placeholder: e.g. username#1234
+    validations:
+      required: false
+
+  - type: dropdown
+    id: experience-level
+    attributes:
+      label: Experience Level
+      description: Helps us recommend the right projects and issues for you
+      options:
+        - Beginner (learning the basics)
+        - Intermediate (comfortable building projects)
+        - Advanced (experienced developer)
+        - Expert (professional or open-source maintainer)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: interests
+    attributes:
+      label: Areas of Interest
+      description: What would you like to work on? Select all that apply.
+      multiple: true
+      options:
+        - Web Development (HTML, CSS, JavaScript)
+        - Backend Development (Python, Node.js, Go)
+        - MotherTongue Language Project
+        - Documentation and Technical Writing
+        - UI/UX Design
+        - DevOps and CI/CD
+        - Community Management
+        - Open Source Mentoring
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Why do you want to join?
+      description: Tell us how you found Jaidevstudio and what motivates you to contribute
+      placeholder: |
+        Example: I discovered Jaidevstudio through GitHub Explore and I am
+        excited about the MotherTongue project. I speak Bengali and would
+        love to help build a Bengali programming language interpreter.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: agreements
+    attributes:
+      label: Agreements
+      description: Please confirm the following before submitting
+      options:
+        - label: I will follow the community Code of Conduct and be respectful in all interactions
+          required: true
+        - label: I understand I should set my organization membership to Public after joining
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        Typical processing time: under 5 minutes.
+        If you have questions, join our [Discord](https://discord.gg/wXFWgsAuzR).

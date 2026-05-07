@@ -1,28 +1,85 @@
-name: Ideas
-description: Have a new idea or feature request
-title: "[FEATURE REQUEST] <description here>"
-labels: [enhancement]
+name: Feature Request or Idea
+description: Suggest a new feature, improvement, or project idea for the community
+title: "[IDEA] "
+labels: [enhancement, idea]
+assignees: []
+
 body:
-  - type: textarea
-    id: description
-    attributes:
-      label: Description of feature request, idea
-    validations:
-      required: true
-  - type: textarea
-    id: screenshots
-    attributes:
-      label: Add (multiple) screenshot links (if applicable)
-    validations:
-      required: false
-  - type: textarea
-    id: context
-    attributes:
-      label: Add any other context about the feature request here
-    validations:
-      required: false
   - type: markdown
     attributes:
       value: |
-        You can also join our Discord community [here](https://discord.gg/wXFWgsAuzR)
-        Feel free to check out other cool repositories of the JD Studio Community [here](https://github.com/jaidevstudio)
+        ### Share Your Idea
+
+        We value every suggestion. Whether it is a small improvement or a bold new project idea, we want to hear it.
+
+        ---
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe your idea
+      description: What is the feature or improvement you are proposing?
+      placeholder: |
+        I would like to see [feature] because [reason].
+        It would help with [use case] and benefit [who].
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: What area does this idea relate to?
+      options:
+        - New Project Idea
+        - Existing Repository Improvement
+        - Community and Engagement
+        - Documentation
+        - Automation and CI/CD
+        - Website and Branding
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Estimated Effort
+      description: How much work do you think this would take?
+      options:
+        - Small (a few hours)
+        - Medium (a few days)
+        - Large (a week or more)
+        - Not sure
+    validations:
+      required: false
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References or Examples
+      description: Links, screenshots, or examples of similar features elsewhere
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Anything else that might help us understand and evaluate this idea
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: volunteer
+    attributes:
+      label: Would you like to work on this?
+      options:
+        - label: I am willing to contribute to implementing this idea
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        Discuss ideas with the community on [Discord](https://discord.gg/wXFWgsAuzR).

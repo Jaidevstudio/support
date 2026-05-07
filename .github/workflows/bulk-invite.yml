@@ -1,0 +1,152 @@
+name: Bulk Invite Processing
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run - only list users, do not send invitations"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
+  schedule:
+    # Run every 6 hours to catch any issues that slipped through auto-invite
+    - cron: "0 */6 * * *"
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  bulk_process:
+    runs-on: ubuntu-latest
+    env:
+      ORG_NAME: Jaidevstudio
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch all open invitation issues
+        id: fetch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get all open issues with the invite label
+          ISSUES=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/issues?state=open&labels=invite+me+to+the+organisation&per_page=100")
+
+          COUNT=$(echo "$ISSUES" | jq 'length')
+          echo "Found $COUNT open invitation issues"
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+
+          # Save to file for processing
+          echo "$ISSUES" > /tmp/pending_issues.json
+
+      - name: Process each invitation request
+        if: steps.fetch.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INVITE_TOKEN: ${{ secrets.INVITE_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+        run: |
+          INVITED=0
+          SKIPPED=0
+          FAILED=0
+
+          for ROW in $(cat /tmp/pending_issues.json | jq -r '.[] | @base64'); do
+            _jq() {
+              echo "$ROW" | base64 --decode | jq -r "$1"
+            }
+
+            USERNAME=$(_jq '.user.login')
+            ISSUE_NUM=$(_jq '.number')
+
+            echo "Processing: $USERNAME (issue #$ISSUE_NUM)"
+
+            if [[ "$DRY_RUN" == "true" ]]; then
+              echo "  [DRY RUN] Would invite $USERNAME"
+              continue
+            fi
+
+            # Check if already a member
+            MEMBER_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+              -H "Authorization: Bearer $INVITE_TOKEN" \
+              "https://api.github.com/orgs/$ORG_NAME/members/$USERNAME")
+
+            if [[ "$MEMBER_STATUS" == "204" ]]; then
+              echo "  Already a member, closing issue"
+              SKIPPED=$((SKIPPED + 1))
+
+              curl -s -X POST \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/vnd.github.v3+json" \
+                -d "{\"body\": \"### Already a Member\n\nHello @$USERNAME, you are already a member of $ORG_NAME. Closing this issue.\n\n---\n*Automated by Jaidevstudio Invitation Pipeline*\"}" \
+                "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUM/comments"
+
+              curl -s -X PATCH \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -d '{"state": "closed", "state_reason": "completed"}' \
+                "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUM"
+              continue
+            fi
+
+            # Get user ID
+            USER_ID=$(curl -s -H "Authorization: Bearer $INVITE_TOKEN" \
+              "https://api.github.com/users/$USERNAME" | jq -r '.id')
+
+            if [[ "$USER_ID" == "null" || -z "$USER_ID" ]]; then
+              echo "  Could not resolve user ID for $USERNAME"
+              FAILED=$((FAILED + 1))
+              continue
+            fi
+
+            # Send invitation
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+              -H "Authorization: Bearer $INVITE_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              -d "{\"invitee_id\": $USER_ID, \"role\": \"direct_member\"}" \
+              "https://api.github.com/orgs/$ORG_NAME/invitations")
+
+            if [[ "$RESPONSE" == "201" || "$RESPONSE" == "200" || "$RESPONSE" == "422" ]]; then
+              echo "  Invitation sent (HTTP $RESPONSE)"
+              INVITED=$((INVITED + 1))
+
+              curl -s -X POST \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/vnd.github.v3+json" \
+                -d "{\"body\": \"### Invitation Sent\n\nHello @$USERNAME, your invitation to join **$ORG_NAME** has been sent.\n\nAccept it here: https://github.com/orgs/$ORG_NAME/invitation\n\nThen set your membership to **Public** at: https://github.com/orgs/$ORG_NAME/people\n\n---\n*Automated by Jaidevstudio Invitation Pipeline (bulk processing)*\"}" \
+                "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUM/comments"
+
+              # Update labels and close
+              curl -s -X POST \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -d '{"labels": ["invitation-sent"]}' \
+                "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUM/labels"
+
+              curl -s -X PATCH \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -d '{"state": "closed", "state_reason": "completed"}' \
+                "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUM"
+            else
+              echo "  Failed to invite (HTTP $RESPONSE)"
+              FAILED=$((FAILED + 1))
+
+              curl -s -X POST \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -d '{"labels": ["needs-manual-review"]}' \
+                "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUM/labels"
+            fi
+
+            # Rate limit: pause between invitations
+            sleep 2
+          done
+
+          echo ""
+          echo "=== Bulk Processing Summary ==="
+          echo "Invited: $INVITED"
+          echo "Skipped (already members): $SKIPPED"
+          echo "Failed: $FAILED"

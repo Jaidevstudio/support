@@ -1,27 +1,51 @@
-name: Other
-description: Use this for any other issues. PLEASE do not create blank issues
-title: "[OTHER]"
+name: General Issue
+description: For anything that does not fit the other categories
+title: "[GENERAL] "
 labels: [triage]
+assignees: []
+
 body:
   - type: markdown
     attributes:
-      value: "# Other issue"
-  - type: textarea
-    id: issuedescription
+      value: |
+        ### General Issue
+
+        Use this form for anything that does not fit the other templates.
+        Please provide enough detail so we can understand and respond effectively.
+
+        ---
+
+  - type: dropdown
+    id: category
     attributes:
-      label: What would you like to share?
-      description: Provide a clear and concise explanation of your issue.
+      label: Category
+      options:
+        - Question about the organization
+        - Suggestion or feedback
+        - Request for help
+        - Collaboration proposal
+        - Other
     validations:
       required: true
+
   - type: textarea
-    id: extrainfo
+    id: description
     attributes:
-      label: Additional information
-      description: Is there anything else we should know about this issue?
+      label: What would you like to share?
+      description: Provide a clear explanation of your issue, question, or suggestion
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Information
+      description: Any extra context, links, or screenshots that would help us understand
     validations:
       required: false
+
   - type: markdown
     attributes:
       value: |
-        You can also join our Discord community [here](https://discord.gg/wXFWgsAuzR)
-        Feel free to check out other cool repositories of the JD Studio Community [here](https://github.com/jaidevstudio)
+        ---
+        Prefer real-time conversation? Join [Discord](https://discord.gg/wXFWgsAuzR).

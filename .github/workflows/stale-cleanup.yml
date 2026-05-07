@@ -1,0 +1,112 @@
+name: Stale Invitation Cleanup
+
+on:
+  schedule:
+    # Run every Monday at 9:00 AM UTC
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    env:
+      ORG_NAME: Jaidevstudio
+
+    steps:
+      - name: Find and cancel stale pending invitations
+        env:
+          GH_TOKEN: ${{ secrets.INVITE_TOKEN }}
+        run: |
+          echo "Fetching pending organization invitations..."
+
+          INVITATIONS=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/orgs/$ORG_NAME/invitations?per_page=100")
+
+          TOTAL=$(echo "$INVITATIONS" | jq 'length')
+          echo "Total pending invitations: $TOTAL"
+
+          STALE=0
+          NOW=$(date +%s)
+
+          for ROW in $(echo "$INVITATIONS" | jq -r '.[] | @base64'); do
+            _jq() {
+              echo "$ROW" | base64 --decode | jq -r "$1"
+            }
+
+            INVITE_ID=$(_jq '.id')
+            LOGIN=$(_jq '.login')
+            CREATED=$(_jq '.created_at')
+            CREATED_TS=$(date -d "$CREATED" +%s 2>/dev/null || echo "0")
+
+            # Calculate age in days
+            AGE_DAYS=$(( (NOW - CREATED_TS) / 86400 ))
+
+            if [[ $AGE_DAYS -gt 14 ]]; then
+              echo "Stale invitation: $LOGIN (pending for $AGE_DAYS days) - cancelling"
+              STALE=$((STALE + 1))
+
+              curl -s -X DELETE \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/orgs/$ORG_NAME/invitations/$INVITE_ID"
+
+              sleep 1
+            else
+              echo "Active invitation: $LOGIN ($AGE_DAYS days old) - keeping"
+            fi
+          done
+
+          echo ""
+          echo "=== Cleanup Summary ==="
+          echo "Total pending: $TOTAL"
+          echo "Stale cancelled (>14 days): $STALE"
+          echo "Active remaining: $((TOTAL - STALE))"
+
+      - name: Report stale issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Checking for old unclosed invitation issues..."
+
+          # Find issues older than 30 days still open with invite label
+          ISSUES=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/issues?state=open&labels=invite+me+to+the+organisation&per_page=100")
+
+          NOW=$(date +%s)
+
+          for ROW in $(echo "$ISSUES" | jq -r '.[] | @base64'); do
+            _jq() {
+              echo "$ROW" | base64 --decode | jq -r "$1"
+            }
+
+            ISSUE_NUM=$(_jq '.number')
+            USERNAME=$(_jq '.user.login')
+            CREATED=$(_jq '.created_at')
+            CREATED_TS=$(date -d "$CREATED" +%s 2>/dev/null || echo "0")
+            AGE_DAYS=$(( (NOW - CREATED_TS) / 86400 ))
+
+            if [[ $AGE_DAYS -gt 30 ]]; then
+              echo "Closing stale issue #$ISSUE_NUM from $USERNAME ($AGE_DAYS days old)"
+
+              curl -s -X POST \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -d "{\"body\": \"### Issue Auto-Closed\n\nThis invitation request has been open for over 30 days without resolution.\n\n@$USERNAME, if you still want to join, please submit a new request.\n\n---\n*Automated by Jaidevstudio Stale Cleanup*\"}" \
+                "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUM/comments"
+
+              curl -s -X PATCH \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -d '{"state": "closed", "state_reason": "not_planned"}' \
+                "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUM"
+
+              curl -s -X POST \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -d '{"labels": ["stale"]}' \
+                "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUM/labels"
+            fi
+          done

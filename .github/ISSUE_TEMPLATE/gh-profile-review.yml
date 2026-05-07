@@ -1,17 +1,67 @@
 name: GitHub Profile Review
-description: Please review my GitHub profile on a livestream
-title: "[REVIEW] <your-username>"
-labels: [gh profile review, live stream review]
+description: Submit your GitHub profile for a community review and get feedback on how to improve it
+title: "[PROFILE REVIEW] "
+labels: [gh profile review, community-review]
+assignees: []
+
 body:
-  - type: input
-    id: link
-    attributes:
-      label: GitHub Profile Link
-      placeholder: https://github.com/<your-username>
-    validations:
-      required: true
   - type: markdown
     attributes:
       value: |
-        You can also join our Discord community [here](https://discord.gg/wXFWgsAuzR)
-        Feel free to check out other cool repositories of the JD Studio Community [here](https://github.com/jaidevstudio)
+        ### GitHub Profile Review
+
+        Submit your profile and get constructive feedback from the community.
+        We review README design, pinned repos, contribution graph, and overall presentation.
+
+        ---
+
+  - type: input
+    id: profile-link
+    attributes:
+      label: GitHub Profile Link
+      description: Your full GitHub profile URL
+      placeholder: https://github.com/your-username
+    validations:
+      required: true
+
+  - type: dropdown
+    id: focus-area
+    attributes:
+      label: What should we focus on?
+      description: Select the areas where you want the most feedback
+      multiple: true
+      options:
+        - Profile README design and content
+        - Pinned repositories selection
+        - Contribution activity and consistency
+        - Bio and description
+        - Overall impression and branding
+    validations:
+      required: true
+
+  - type: dropdown
+    id: experience
+    attributes:
+      label: Your experience level
+      options:
+        - Student or Beginner
+        - Intermediate Developer
+        - Senior or Professional
+        - Looking for a job (want hiring-ready feedback)
+    validations:
+      required: true
+
+  - type: textarea
+    id: specific-questions
+    attributes:
+      label: Specific questions or concerns
+      description: Is there anything particular you want us to look at?
+      placeholder: e.g. Is my README too long? Should I change my pinned repos?
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        Need inspiration? Check out our [Unique GitHub Profiles](https://github.com/Jaidevstudio/Unique-Github-Profiles) collection.
