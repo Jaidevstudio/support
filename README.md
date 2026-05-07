@@ -3,16 +3,16 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/orgs/Jaidevstudio/people"><img src="https://img.shields.io/github/contributors/Jaidevstudio/support?label=Members&style=for-the-badge&color=7c3aed&labelColor=1c2128" alt="Members"/></a>
-  <a href="https://github.com/Jaidevstudio"><img src="https://img.shields.io/github/followers/Jaidevstudio?label=Followers&style=for-the-badge&color=2563eb&labelColor=1c2128" alt="Followers"/></a>
-  <a href="https://github.com/Jaidevstudio/support/issues?q=label%3A%22invite+me+to+the+organisation%22"><img src="https://img.shields.io/github/issues/Jaidevstudio/support?label=Open%20Requests&style=for-the-badge&color=06b6d4&labelColor=1c2128" alt="Open Issues"/></a>
-  <a href="https://github.com/Jaidevstudio/support/stargazers"><img src="https://img.shields.io/github/stars/Jaidevstudio/support?style=for-the-badge&color=f59e0b&labelColor=1c2128" alt="Stars"/></a>
+  <a href="https://github.com/orgs/Jaidevstudio/people"><img src="https://img.shields.io/github/contributors/Jaidevstudio/support?label=Members&style=for-the-badge&color=6d28d9&labelColor=f0f4f8" alt="Members"/></a>
+  <a href="https://github.com/Jaidevstudio"><img src="https://img.shields.io/github/followers/Jaidevstudio?label=Followers&style=for-the-badge&color=2563eb&labelColor=f0f4f8" alt="Followers"/></a>
+  <a href="https://github.com/Jaidevstudio/support/issues?q=label%3A%22invite+me+to+the+organisation%22"><img src="https://img.shields.io/github/issues/Jaidevstudio/support?label=Open%20Requests&style=for-the-badge&color=0891b2&labelColor=f0f4f8" alt="Open Issues"/></a>
+  <a href="https://github.com/Jaidevstudio/support/stargazers"><img src="https://img.shields.io/github/stars/Jaidevstudio/support?style=for-the-badge&color=d97706&labelColor=f0f4f8" alt="Stars"/></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/Jaidevstudio/support/issues/new?template=invitation.yml"><img src="https://img.shields.io/badge/JOIN_THE_ORGANIZATION-Apply_Now-7c3aed?style=for-the-badge&labelColor=1c2128" alt="Join Now"/></a>
-  <a href="https://discord.gg/wXFWgsAuzR"><img src="https://img.shields.io/badge/DISCORD-Join_Community-5865F2?style=for-the-badge&logo=discord&logoColor=white&labelColor=1c2128" alt="Discord"/></a>
-  <a href="https://jaidevstudio.netlify.app/"><img src="https://img.shields.io/badge/WEBSITE-Visit_Us-06b6d4?style=for-the-badge&labelColor=1c2128" alt="Website"/></a>
+  <a href="https://github.com/Jaidevstudio/support/issues/new?template=invitation.yml"><img src="https://img.shields.io/badge/JOIN_THE_ORGANIZATION-Apply_Now-6d28d9?style=for-the-badge&labelColor=f0f4f8" alt="Join Now"/></a>
+  <a href="https://discord.gg/wXFWgsAuzR"><img src="https://img.shields.io/badge/DISCORD-Join_Community-5865F2?style=for-the-badge&logo=discord&logoColor=white&labelColor=f0f4f8" alt="Discord"/></a>
+  <a href="https://jaidevstudio.github.io"><img src="https://img.shields.io/badge/WEBSITE-Visit_Us-0891b2?style=for-the-badge&labelColor=f0f4f8" alt="Website"/></a>
 </p>
 
 <img src="./assets/divider.svg" width="100%"/>
@@ -76,17 +76,15 @@ Change from Private to Public:
 
 ## Our Projects
 
-<p align="center">
-  <img src="./assets/projects.svg" alt="Projects overview" width="100%"/>
-</p>
-
 | Repository | Description | Links |
 |:-----------|:------------|:------|
-| **MotherTongue Connect To World** | Building interpreters for every mother language -- proving technology has no linguistic limits | [Repo](https://github.com/Jaidevstudio/MotherTongue) |
-| **Unique Github Profiles** | Curated collection of inspiring GitHub profile READMEs for ideas and inspiration | [Repo](https://github.com/Jaidevstudio/Unique-Github-Profiles) |
-| **Support** | Community hub for help, membership, and discussions (you are here) | [Issues](https://github.com/Jaidevstudio/support/issues) |
+| **MotherTongue** | Write and run code in your mother language -- our flagship interpreter with 17 language slots | [Repo](https://github.com/Jaidevstudio/MotherTongue) |
+| **DevToolkit** | Collection of free developer utilities -- each tool is one PR | [Repo](https://github.com/Jaidevstudio/DevToolkit) |
+| **OpenSource Challenges** | Weekly coding challenges for all skill levels | [Repo](https://github.com/Jaidevstudio/OpenSource-Challenges) |
+| **CodeSnippets** | Community-built library of reusable code snippets in every language | [Repo](https://github.com/Jaidevstudio/CodeSnippets) |
+| **Unique Github Profiles** | Curated collection of inspiring GitHub profile READMEs | [Repo](https://github.com/Jaidevstudio/Unique-Github-Profiles) |
+| **Member.json** | Member directory -- add yourself after joining | [Repo](https://github.com/Jaidevstudio/Member.json) |
 | **About** | Our community values, mission, and core beliefs | [Repo](https://github.com/Jaidevstudio/about) |
-| **Member.json** | Member directory and welcome greeting for the community | [Repo](https://github.com/Jaidevstudio/Member.json) |
 
 <br/>
 
@@ -95,16 +93,6 @@ Change from Private to Public:
 <br/>
 
 ## How to Contribute
-
-```
-Fork the repo          Create a branch         Make changes
-you want to      -->   for your feature   -->  and commit with
-work on                                        clear messages
-      |
-      v
-Push to your fork
-and open a PR     -->  Maintainer reviews  --> Merged
-```
 
 **Where to start:**
 
@@ -182,13 +170,6 @@ git merge upstream/main
 <summary><strong>How do I get started with open source?</strong></summary>
 <br/>
 Start by making your first pull request in this repository. Contributing to open source is not just about code -- it is about collaboration, communication, and adding value. If you need help, ask in our Discord.
-<br/><br/>
-Resources:
-<ul>
-  <li><a href="https://github.com/jaidevstudio/support/issues/">How to get started with Robot Projects</a></li>
-  <li><a href="https://github.com/jaidevstudiorobot">Open source tips from Robot Jai</a></li>
-  <li><a href="./tips/finding-open-source-projects.md">Finding Open Source Projects</a></li>
-</ul>
 </details>
 
 <br/>
@@ -199,7 +180,7 @@ Resources:
 
 <p align="center">
   <a href="https://discord.gg/wXFWgsAuzR"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"/></a>
-  <a href="https://jaidevstudio.netlify.app/"><img src="https://img.shields.io/badge/Website-06b6d4?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Website"/></a>
+  <a href="https://jaidevstudio.github.io"><img src="https://img.shields.io/badge/Website-0891b2?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Website"/></a>
   <a href="mailto:jaidevstudio.org@gmail.com"><img src="https://img.shields.io/badge/Email-ea4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"/></a>
 </p>
 
